@@ -6,12 +6,12 @@ jobs:
     sast_scan:
         name: Bandit Scan
         runs-on: ubuntu-latest
+        permissions:
+            # Required for all workflows
+            security-events: write
+            # Only required for workflows in private repositories
+            actions: read
+            contents: read
         steps:
-          - name: Checkout
-            uses: actions/checkout@v6.0.2
-
-          - name: Setup Python
-            uses: actions/setup-python@v6.2.0
-            
-          - name: Perform Bandit Analysis
-            uses: PyCQA/bandit-action@v1
+            - name: Perform Bandit Analysis
+              uses: PyCQA/bandit-action@v1
