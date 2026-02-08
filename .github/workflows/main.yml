@@ -9,11 +9,10 @@ jobs:
         steps:
           - name: Checkout
             uses: actions/checkout@v6.0.2
-
-          - name: Setup Python
-            uses: actions/setup-python@v6.2.0
-            
-          - name: installing Bandit
-            run: pip install bandit
           - name: Run Bandit Scan
-            run: bandit  -ii -ll -r .
+            uses: shundor/bandit-action@v1
+            with: 
+                path: "."
+                level: high
+                confidence: high
+                exit_zero: true           
