@@ -76,7 +76,7 @@ jobs:
           if: always()
           uses: actions/upload-artifact@v6.0.0
           with:
-            name: semgrep-json
+            name: gitleaks
             path: gitleaks.json
     # image_scan:
     #     name: Image Scan
