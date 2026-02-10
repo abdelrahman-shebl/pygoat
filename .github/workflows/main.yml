@@ -59,6 +59,27 @@ jobs:
           with:
             name: semgrep-json
             path: semgrep-results.json
+
+    gitleaks:
+      name: testing gitleaks
+      runs-on: ubuntu-latest
+      container:
+        image: semgrep/semgrep
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v6.0.2
+
+        - name: Gitleaks
+          uses: gitleaks/gitleaks-action@v2.3.9
+          with:
+            args: detect --report-format json --report-path gitleaks.json
+
+        - name: Upload a json Artifact
+          if: always()
+          uses: actions/upload-artifact@v6.0.0
+          with:
+            name: semgrep-json
+            path: gitleaks.json
     # image_scan:
     #     name: Image Scan
     #     runs-on: ubuntu-latest
