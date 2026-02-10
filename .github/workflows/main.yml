@@ -26,41 +26,59 @@ jobs:
             name: bandit-reports
             path: bandit-report.html
 
-    image_scan:
-        name: Image Scan
-        runs-on: ubuntu-latest
-        steps:
+    semgprep:
+      name: testing semgrep
+      runs-on: ubuntu-latest
+      container:
+        image: semgrep/semgrep
+      steps:
         - name: Checkout
           uses: actions/checkout@v6.0.2
-        -
-          name: Login to Docker Hub
-          uses: docker/login-action@v3
-          with:
-            username: ${{ vars.DOCKERHUB_USERNAME }}
-            password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-        - name: Docker Setup Buildx
-          uses: docker/setup-buildx-action@v3.12.0
+        - name: Run semgrep scans
+          run: semgrep scan --config --auto --html --output=semgrep-reports.html
 
-        - name: Build and push Docker images
-          uses: docker/build-push-action@v6.18.0
-          with:
-            load: true
-            cache-from: type=gha
-            cache-to: type=gha,mode=max
-            tags: image/test:v1
-
-        - name: Docker Scout
-          uses: docker/scout-action@v1.18.2
-          with:
-            command: quickview, cves 
-            image: image/test:v1
-            only-severities: critical,high
-            sarif-file: docker-scout-reports.sarif
-            
         - name: Upload a Build Artifact
           if: always()
           uses: actions/upload-artifact@v6.0.0
           with:
-            name: docker-scout-reports
-            path: docker-scout-reports.sarif
+            name: semgrep-reports
+            path: semgrep-reports.html
+    # image_scan:
+    #     name: Image Scan
+    #     runs-on: ubuntu-latest
+    #     steps:
+    #     - name: Checkout
+    #       uses: actions/checkout@v6.0.2
+    #     -
+    #       name: Login to Docker Hub
+    #       uses: docker/login-action@v3
+    #       with:
+    #         username: ${{ vars.DOCKERHUB_USERNAME }}
+    #         password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    #     - name: Docker Setup Buildx
+    #       uses: docker/setup-buildx-action@v3.12.0
+
+    #     - name: Build and push Docker images
+    #       uses: docker/build-push-action@v6.18.0
+    #       with:
+    #         load: true
+    #         cache-from: type=gha
+    #         cache-to: type=gha,mode=max
+    #         tags: image/test:v1
+
+    #     - name: Docker Scout
+    #       uses: docker/scout-action@v1.18.2
+    #       with:
+    #         command: quickview, cves 
+    #         image: image/test:v1
+    #         only-severities: critical,high
+    #         sarif-file: docker-scout-reports.sarif
+            
+    #     - name: Upload a Build Artifact
+    #       if: always()
+    #       uses: actions/upload-artifact@v6.0.0
+    #       with:
+    #         name: docker-scout-reports
+    #         path: docker-scout-reports.sarif
