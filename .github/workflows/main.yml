@@ -36,7 +36,7 @@ jobs:
           uses: actions/checkout@v6.0.2
 
         - name: Run semgrep scans
-          run: semgrep scan --config --auto --html --output=semgrep-reports.html
+          run: semgrep scan --config auto --html --output=semgrep-reports.html
 
         - name: Upload a Build Artifact
           if: always()
