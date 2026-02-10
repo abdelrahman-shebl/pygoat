@@ -6,14 +6,22 @@ jobs:
     sast_scan:
         name: Bandit Scan
         runs-on: ubuntu-latest
-        permissions:
-            # Required for all workflows
-            security-events: write
-            # Only required for workflows in private repositories
-            actions: read
-            contents: read
         steps:
-            - name: Perform Bandit Analysis
-              uses: PyCQA/bandit-action@v1
-            - name: Bandit Action
-              uses: mdegis/bandit-action@v1.1
+        - name: Checkout
+          uses: actions/checkout@v6.0.2
+
+        - name: Setup Python
+          uses: actions/setup-python@v6.2.0
+
+        - name: install Bandit
+          run: pip install bandit
+
+        - name: Run bandit scans
+          run: bandit -ll -ii -r . -f html -o bandit-report.html
+
+        - name: Upload a Build Artifact
+          if: always()
+          uses: actions/upload-artifact@v6.0.0
+          with:
+            name: bandit-reports
+            path: bandit-report.html
